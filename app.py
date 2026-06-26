@@ -1,9 +1,16 @@
-from flask import Flask, render_template, request, redirect, session, url_for
+from flask import Flask, render_template, request, redirect, session, url_for,send_from_directory
 import pymysql
 import os
 
 app = Flask(__name__)
 app.secret_key = "petfinder_secret_key"
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(
+        'uploads',
+        filename
+    )
 
 # ---------------- DATABASE CONNECTION ----------------
 
@@ -92,7 +99,21 @@ def dashboard():
     if 'name' not in session:
         return redirect(url_for('login'))
 
-    return render_template('dashboard.html')
+    cursor = db.cursor()
+
+    cursor.execute("""
+    SELECT *
+    FROM pet_reports
+    ORDER BY created_at DESC
+    LIMIT 3
+    """)
+
+    reports = cursor.fetchall()
+
+    return render_template(
+    'dashboard.html',
+    reports=reports
+)
 
 # ---------------- UPLOAD PET REPORT ----------------
 
