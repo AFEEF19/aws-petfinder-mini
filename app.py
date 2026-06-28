@@ -1,25 +1,23 @@
-from flask import Flask, render_template, request, redirect, session, url_for,send_from_directory
+from flask import Flask, render_template, request, redirect, session, url_for
 import pymysql
-import os
+import boto3
 
 app = Flask(__name__)
 app.secret_key = "petfinder_secret_key"
 
-@app.route('/uploads/<filename>')
-def uploaded_file(filename):
-    return send_from_directory(
-        'uploads',
-        filename
-    )
 
 # ---------------- DATABASE CONNECTION ----------------
 
 db = pymysql.connect(
-    host="localhost",
+    host="petfinder.c5k8w6k80gt4.ap-south-1.rds.amazonaws.com",
     user="root",
     password="root123*",
     database="petfinder"
 )
+
+bucket_name = "s3buc-pro"
+
+s3 = boto3.client("s3")
 
 # ---------------- HOME ----------------
 
@@ -134,9 +132,13 @@ def upload():
 
     filename = photo.filename
 
-    photo.save(
-        os.path.join('uploads', filename)
+    s3.upload_fileobj(
+        photo,
+        bucket_name,
+        filename
     )
+
+    photo_url = f"https://{bucket_name}.s3.ap-south-1.amazonaws.com/{filename}"
 
     cursor = db.cursor()
 
@@ -163,7 +165,7 @@ def upload():
             location,
             contact,
             description,
-            filename
+            photo_url
         )
     )
 

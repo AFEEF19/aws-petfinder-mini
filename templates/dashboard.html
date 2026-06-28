@@ -246,8 +246,8 @@
     <div class="relative h-56 overflow-hidden">
 
         <img
-            src="{{ url_for('uploaded_file', filename=reports[0][7]) }}"
-            class="w-full h-full object-cover">
+    src="{{ reports[0][7] }}"
+    class="w-full h-full object-cover">
 
         <span class="absolute top-md left-md px-md py-xs
         {% if reports[0][3] == 'Lost' %}
@@ -351,8 +351,9 @@ Very friendly male, responding to the name 'Cooper'. Last seen wearing a brown l
 
     <div class="relative h-56 overflow-hidden">
 
-        <img src="{{ url_for('uploaded_file', filename=reports[1][7]) }}"
-             class="w-full h-full object-cover">
+        <img
+    src="{{ reports[1][7] }}"
+    class="w-full h-full object-cover">
 
         <span class="absolute top-md left-md px-md py-xs
         {% if reports[1][3] == 'Lost' %}
